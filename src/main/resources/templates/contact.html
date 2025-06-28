@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - WeatherDiary</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.1) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .navbar-brand, .nav-link {
+            color: white !important;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            color: #ffd700 !important;
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
+        }
+
+        .hero-section {
+            padding: 80px 0;
+            text-align: center;
+            color: white;
+        }
+
+        .contact-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+        }
+
+        .contact-header {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .contact-info {
+            padding: 40px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding: 20px;
+            border-radius: 15px;
+            background: rgba(102, 126, 234, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .contact-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateX(10px);
+        }
+
+        .contact-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-right: 20px;
+            font-size: 1.5rem;
+        }
+
+        .founder-section {
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .founder-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 2.5rem;
+        }
+
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .floating-element {
+            position: absolute;
+            opacity: 0.1;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-element:nth-child(1) {
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-element:nth-child(2) {
+            top: 20%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+
+        .floating-element:nth-child(3) {
+            bottom: 10%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+    </style>
+</head>
+<body>
+<!-- Floating Background Elements -->
+<div class="floating-elements">
+    <div class="floating-element">
+        <i class="fas fa-cloud fa-3x"></i>
+    </div>
+    <div class="floating-element">
+        <i class="fas fa-sun fa-3x"></i>
+    </div>
+    <div class="floating-element">
+        <i class="fas fa-book fa-3x"></i>
+    </div>
+</div>
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <i class="fas fa-book-open me-2"></i>WeatherDiary
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/features">Features</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/about">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/contact">Contact</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <h1 class="display-4 mb-4">
+            <i class="fas fa-phone-alt me-3"></i>Get in Touch
+        </h1>
+        <p class="lead">We'd love to hear from you! Reach out to us anytime.</p>
+    </div>
+</section>
+
+<!-- Contact Information -->
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="contact-card">
+                    <!-- Contact Header -->
+                    <div class="contact-header">
+                        <h2><i class="fas fa-envelope me-3"></i>Contact Information</h2>
+                        <p class="mb-0">Ready to help you with your diary and weather needs</p>
+                    </div>
+
+                    <!-- Founder Section -->
+                    <div class="contact-info">
+                        <div class="founder-section">
+                            <div class="founder-avatar">
+                                <i class="fas fa-user-tie"></i>
+                            </div>
+                            <h3 class="mb-2">Aditya Singh</h3>
+                            <h5 class="text-muted mb-3">CEO & Founder</h5>
+                            <p class="mb-0">Leading innovation in personal diary management with integrated weather tracking</p>
+                        </div>
+
+                        <!-- Contact Details -->
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-headset"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-1">Customer Care Support</h5>
+                                <p class="mb-1"><strong>Phone:</strong> +91 9142738359</p>
+                                <p class="mb-0 text-muted">Available Monday - Friday, 9:00 AM - 6:00 PM IST</p>
+                            </div>
+                        </div>
+
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-1">Email Support</h5>
+                                <p class="mb-1"><strong>Email:</strong> support@weatherdiary.com</p>
+                                <p class="mb-0 text-muted">We'll respond within 24 hours</p>
+                            </div>
+                        </div>
+
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-1">Office Location</h5>
+                                <p class="mb-1"><strong>Address:</strong> WeatherDiary Headquarters</p>
+                                <p class="mb-0 text-muted">Ludhiana, Punjab, India</p>
+                            </div>
+                        </div>
+
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-1">Business Hours</h5>
+                                <p class="mb-1"><strong>Monday - Friday:</strong> 9:00 AM - 6:00 PM</p>
+                                <p class="mb-1"><strong>Saturday:</strong> 10:00 AM - 4:00 PM</p>
+                                <p class="mb-0"><strong>Sunday:</strong> Closed</p>
+                            </div>
+                        </div>
+
+                        <!-- Call to Action -->
+                        <div class="text-center mt-4">
+                            <a href="tel:+919142738359" class="btn btn-primary btn-lg me-3">
+                                <i class="fas fa-phone me-2"></i>Call Now
+                            </a>
+                            <a href="mailto:support@weatherdiary.com" class="btn btn-outline-primary btn-lg">
+                                <i class="fas fa-envelope me-2"></i>Send Email
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Quick Contact Section -->
+<section class="py-5">
+    <div class="container text-center text-white">
+        <h3 class="mb-4">Need Immediate Help?</h3>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <div class="p-4">
+                    <i class="fas fa-question-circle fa-3x mb-3"></i>
+                    <h5>General Inquiries</h5>
+                    <p>Questions about our diary app features</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="p-4">
+                    <i class="fas fa-bug fa-3x mb-3"></i>
+                    <h5>Technical Support</h5>
+                    <p>Having issues with weather data or app functionality</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="p-4">
+                    <i class="fas fa-lightbulb fa-3x mb-3"></i>
+                    <h5>Feature Requests</h5>
+                    <p>Suggest new features for WeatherDiary</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

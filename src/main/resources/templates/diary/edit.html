@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Entry - My Diary</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .page-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .form-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            min-height: 80vh;
+        }
+        .save-btn {
+            background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+            color: white;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,184,148,0.4);
+        }
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+    </style>
+</head>
+<body>
+<div class="page-container">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="form-container p-5">
+                    <!-- Header -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2>
+                            <i class="fas fa-edit me-2"></i>
+                            Edit Entry
+                        </h2>
+                        <a href="/dashboard" class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </a>
+                    </div>
+
+                    <!-- Edit Form -->
+                    <form th:action="@{/diary/update/{id}(id=${entry.id})}" method="post" th:object="${entry}">
+                        <!-- Title -->
+                        <div class="mb-4">
+                            <label for="title" class="form-label h5">Title</label>
+                            <input type="text" class="form-control form-control-lg"
+                                   id="title" th:field="*{title}" required>
+                            <div th:if="${#fields.hasErrors('title')}"
+                                 class="text-danger mt-1" th:errors="*{title}"></div>
+                        </div>
+
+                        <!-- Content -->
+                        <div class="mb-4">
+                            <label for="content" class="form-label h5">Content</label>
+                            <textarea class="form-control" id="content" rows="12"
+                                      th:field="*{content}" required
+                                      placeholder="Write your thoughts here..."></textarea>
+                            <div th:if="${#fields.hasErrors('content')}"
+                                 class="text-danger mt-1" th:errors="*{content}"></div>
+                        </div>
+
+                        <!-- Mood and Date Row -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label for="mood" class="form-label">Mood</label>
+                                <select class="form-select" id="mood" th:field="*{mood}">
+                                    <option value="">Select mood...</option>
+                                    <option value="HAPPY">😊 Happy</option>
+                                    <option value="SAD">😢 Sad</option>
+                                    <option value="EXCITED">🤩 Excited</option>
+                                    <option value="CALM">😌 Calm</option>
+                                    <option value="ANXIOUS">😰 Anxious</option>
+                                    <option value="GRATEFUL">🙏 Grateful</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="entryDate" class="form-label">Entry Date</label>
+                                <input type="date" class="form-control"
+                                       id="entryDate" th:field="*{entryDate}">
+                            </div>
+                        </div>
+
+                        <!-- Created Date Info -->
+                        <div class="mb-4">
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Originally created on
+                                <span th:text="${#dates.format(createdDate, 'EEEE, MMMM dd, yyyy ''at'' HH:mm')}">
+                                    Monday, January 01, 2024 at 10:30
+                                </span>
+                            </small>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex gap-3 justify-content-end">
+                            <a href="/dashboard" class="btn btn-outline-secondary btn-lg">
+                                Cancel
+                            </a>
+                            <button type="submit" class="btn save-btn btn-lg">
+                                <i class="fas fa-save me-2"></i>
+                                Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

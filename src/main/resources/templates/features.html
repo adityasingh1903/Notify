@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Features - Notify Digital Diary Platform</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #4c63d2;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo i {
+            font-size: 1.8rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #666;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: #4c63d2;
+        }
+
+        .auth-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .auth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .hero-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        .features-section {
+            background: white;
+            padding: 4rem 2rem;
+            margin-top: 1rem;
+        }
+
+        .features-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .feature-card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 20px;
+            padding: 3rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .feature-card:hover::before {
+            left: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            border-color: #4c63d2;
+        }
+
+        .feature-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-icon {
+            font-size: 3.5rem;
+            color: #4c63d2;
+            min-width: 80px;
+        }
+
+        .feature-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .feature-description {
+            color: #666;
+            line-height: 1.7;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            flex-grow: 1;
+        }
+
+        .feature-benefits {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .feature-benefits li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            color: #555;
+        }
+
+        .feature-benefits li i {
+            color: #4c63d2;
+            font-size: 1rem;
+        }
+
+        .feature-cta {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-top: auto;
+        }
+
+        .feature-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 4rem 2rem;
+            text-align: center;
+            color: white;
+        }
+
+        .cta-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .cta-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .cta-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .cta-button {
+            background: white;
+            color: #4c63d2;
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero-title {
+                font-size: 2.2rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .navbar {
+                padding: 1rem;
+            }
+
+            .feature-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .feature-card {
+                padding: 2rem;
+            }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Navigation -->
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="#" class="logo" th:href="@{/}">
+            <i class="fas fa-book-open"></i>
+            Notify
+        </a>
+        <div class="nav-links">
+            <a href="#" class="nav-link active" th:href="@{/features}">Features</a>
+            <a href="#" class="nav-link" th:href="@{/about}">About</a>
+            <a href="#" class="nav-link" th:href="@{/contact}">Contact</a>
+            <a href="#" class="auth-btn" th:href="@{/login}">
+                <i class="fas fa-user"></i>
+                Sign In
+            </a>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <h1 class="hero-title fade-in">Powerful Features for Every Writer</h1>
+    <p class="hero-subtitle fade-in">
+        Discover the comprehensive set of tools designed to enhance your digital journaling experience and help you capture life's moments with precision and beauty.
+    </p>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+    <div class="features-container">
+        <div class="features-grid">
+            <!-- Rich Text Editor -->
+            <div class="feature-card fade-in">
+                <div class="feature-header">
+                    <div class="feature-icon">
+                        <i class="fas fa-pen-fancy"></i>
+                    </div>
+                    <h3 class="feature-title">Rich Text Editor</h3>
+                </div>
+                <p class="feature-description">
+                    Express yourself with our powerful rich text editor. Format your thoughts with precision, add multimedia content, and create beautiful entries that truly capture your voice.
+                </p>
+                <ul class="feature-benefits">
+                    <li><i class="fas fa-check"></i> Advanced formatting options</li>
+                    <li><i class="fas fa-check"></i> Image and video embedding</li>
+                    <li><i class="fas fa-check"></i> Custom fonts and styling</li>
+                    <li><i class="fas fa-check"></i> Real-time spell checking</li>
+                </ul>
+                <a href="#" class="feature-cta" th:href="@{/signup}">
+                    <i class="fas fa-arrow-right"></i>
+                    Try Editor
+                </a>
+            </div>
+
+            <!-- Smart Organization -->
+            <div class="feature-card fade-in">
+                <div class="feature-header">
+                    <div class="feature-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Smart Organization</h3>
+                </div>
+                <p class="feature-description">
+                    Never lose a memory again. Our intelligent organization system automatically categorizes your entries by date, mood, tags, and themes, making every thought easily discoverable.
+                </p>
+                <ul class="feature-benefits">
+                    <li><i class="fas fa-check"></i> Automatic tagging</li>
+                    <li><i class="fas fa-check"></i> Mood tracking</li>
+                    <li><i class="fas fa-check"></i> Advanced search filters</li>
+                    <li><i class="fas fa-check"></i> Custom categories</li>
+                </ul>
+                <a href="#" class="feature-cta" th:href="@{/signup}">
+                    <i class="fas fa-arrow-right"></i>
+                    Organize Now
+                </a>
+            </div>
+
+            <!-- Privacy & Security -->
+            <div class="feature-card fade-in">
+                <div class="feature-header">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Privacy & Security</h3>
+                </div>
+                <p class="feature-description">
+                    Your thoughts deserve the highest level of protection. With end-to-end encryption and zero-knowledge architecture, your entries remain completely private and secure.
+                </p>
+                <ul class="feature-benefits">
+                    <li><i class="fas fa-check"></i> End-to-end encryption</li>
+                    <li><i class="fas fa-check"></i> Two-factor authentication</li>
+                    <li><i class="fas fa-check"></i> Zero-knowledge storage</li>
+                    <li><i class="fas fa-check"></i> Secure backup options</li>
+                </ul>
+                <a href="#" class="feature-cta" th:href="@{/signup}">
+                    <i class="fas fa-arrow-right"></i>
+                    Stay Secure
+                </a>
+            </div>
+
+            <!-- Personal Insights -->
+            <div class="feature-card fade-in">
+                <div class="feature-header">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="feature-title">Personal Insights</h3>
+                </div>
+                <p class="feature-description">
+                    Understand yourself better with AI-powered insights. Track emotional patterns, writing habits, and personal growth through beautiful visualizations and meaningful analytics.
+                </p>
+                <ul class="feature-benefits">
+                    <li><i class="fas fa-check"></i> Mood trend analysis</li>
+                    <li><i class="fas fa-check"></i> Writing frequency tracking</li>
+                    <li><i class="fas fa-check"></i> Personal growth metrics</li>
+                    <li><i class="fas fa-check"></i> Beautiful data visualizations</li>
+                </ul>
+                <a href="#" class="feature-cta" th:href="@{/signup}">
+                    <i class="fas fa-arrow-right"></i>
+                    Get Insights
+                </a>
+            </div>
+
+            <!-- Cross-Platform Sync -->
+            <div class="feature-card fade-in">
+                <div class="feature-header">
+                    <div class="feature-icon">
+                        <i class="fas fa-sync-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Cross-Platform Sync</h3>
+                </div>
+                <p class="feature-description">
+                    Write anywhere, anytime. Your entries sync seamlessly across all your devices, ensuring your thoughts are always accessible whether you're on mobile, tablet, or desktop.
+                </p>
+                <ul class="feature-benefits">
+                    <li><i class="fas fa-check"></i> Real-time synchronization</li>
+                    <li><i class="fas fa-check"></i> Offline writing capability</li>
+                    <li><i class="fas fa-check"></i> Multi-device support</li>
+                    <li><i class="fas fa-check"></i> Cloud backup</li>
+                </ul>
+                <a href="#" class="feature-cta" th:href="@{/signup}">
+                    <i class="fas fa-arrow-right"></i>
+                    Sync Now
+                </a>
+            </div>
+
+            <!-- Export & Share -->
+            <div class="feature-card fade-in">
+                <div class="feature-header">
+                    <div class="feature-icon">
+                        <i class="fas fa-share-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Export & Share</h3>
+                </div>
+                <p class="feature-description">
+                    Your memories belong to you. Export your entries in multiple formats, create beautiful PDFs, or selectively share special moments with friends and family.
+                </p>
+                <ul class="feature-benefits">
+                    <li><i class="fas fa-check"></i> Multiple export formats</li>
+                    <li><i class="fas fa-check"></i> Beautiful PDF generation</li>
+                    <li><i class="fas fa-check"></i> Selective sharing options</li>
+                    <li><i class="fas fa-check"></i> Print-ready formatting</li>
+                </ul>
+                <a href="#" class="feature-cta" th:href="@{/signup}">
+                    <i class="fas fa-arrow-right"></i>
+                    Export & Share
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="cta-container">
+        <h2 class="cta-title">Ready to Start Your Journey?</h2>
+        <p class="cta-subtitle">Join thousands of writers who have already discovered the power of digital journaling with Notify.</p>
+        <a href="#" class="cta-button" th:href="@{/signup}">
+            <i class="fas fa-rocket"></i>
+            Start Writing Today
+        </a>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+    <p>&copy; 2025 Notify. All rights reserved. Made with <i class="fas fa-heart" style="color: #e74c3c;"></i> for digital storytellers.</p>
+</footer>
+
+<script>
+    // Animations and interactions
+    document.addEventListener('DOMContentLoaded', function() {
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationDelay = '0.2s';
+                    entry.target.classList.add('fade-in');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.feature-card').forEach(card => {
+            observer.observe(card);
+        });
+
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-12px) scale(1.02)';
+            });
+
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    });
+</script>
+</body>
+</html>
