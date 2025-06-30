@@ -6,29 +6,61 @@
     <title>Notify Dashboard</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow-x: hidden;
+        }
         .dashboard-container {
             min-height: 100vh;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 10px;
         }
         .main-content {
             background: white;
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            min-height: 80vh;
+            min-height: calc(100vh - 80px);
+            height: auto;
         }
         .weather-panel {
             background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
             border-radius: 15px;
             color: white;
-            min-height: 400px;
+            min-height: calc(30vh - 20px);
+        }
+        .analytics-panel {
+            background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%);
+            border-radius: 15px;
+            color: white;
+            min-height: calc(40vh - 20px);
+            margin-top: 20px;
+        }
+        .news-panel {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
+            border-radius: 15px;
+            color: #2d3436;
+            min-height: calc(25vh - 20px);
+            padding: 20px;
+            margin-bottom: 15px;
         }
         .entry-card {
             transition: transform 0.2s;
             cursor: pointer;
+            position: relative;
         }
         .entry-card:hover {
             transform: translateY(-5px);
+        }
+        .mood-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.2em;
         }
         .new-entry-btn {
             background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
@@ -43,6 +75,32 @@
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0,184,148,0.4);
         }
+        .export-btn {
+            background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+            color: white;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(253, 121, 168, 0.4);
+        }
+        .logout-btn {
+            background: linear-gradient(135deg, #e17055 0%, #d63031 100%);
+            border: none;
+            border-radius: 25px;
+            padding: 8px 20px;
+            color: white;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(225, 112, 85, 0.4);
+        }
         .search-box {
             border-radius: 25px;
             border: 2px solid #e9ecef;
@@ -52,23 +110,112 @@
             border-color: #667eea;
             box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
         }
+        .filter-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .filter-pill {
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 25px;
+            padding: 8px 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: #495057;
+        }
+        .filter-pill:hover {
+            background: #e9ecef;
+            color: #495057;
+        }
+        .filter-pill.active {
+            background: #667eea;
+            border-color: #667eea;
+            color: white;
+        }
+        .chart-container {
+            position: relative;
+            height: 200px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            backdrop-filter: blur(10px);
+        }
+        .news-panel h4 {
+            font-weight: bold;
+        }
+        .news-list {
+            list-style-type: none;
+            padding-left: 0;
+            max-height: calc(49vh - 80px);
+            overflow-y: auto;
+        }
+        .news-list li {
+            margin-bottom: 12px;
+        }
+        .news-list a {
+            color: #2d3436;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .news-list a:hover {
+            text-decoration: underline;
+        }
+        .row {
+            margin-left: 0;
+            margin-right: 0;
+        }
+        .col-lg-8, .col-lg-4 {
+            padding-left: 7.5px;
+            padding-right: 7.5px;
+        }
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 5px;
+            }
+            .main-content {
+                min-height: auto;
+                margin-bottom: 15px;
+            }
+            .weather-panel, .analytics-panel, .news-panel {
+                min-height: 250px;
+                margin-bottom: 15px;
+            }
+            .chart-container {
+                height: 150px;
+            }
+        }
     </style>
 </head>
 <body>
 <div class="dashboard-container">
-    <div class="container-fluid p-4">
+    <div class="container-fluid p-0">
 
         <!-- Header -->
-        <div class="row mb-4">
+        <div class="row mb-2">
             <div class="col-12">
-                <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex justify-content-between align-items-center p-3">
                     <h1 class="text-white mb-0">
                         <i class="fas fa-book-open me-2"></i>
                         My Diary Dashboard
                     </h1>
-                    <span class="text-white h5 mb-0">
-                        Welcome, <span th:text="${user != null ? user.name : 'Guest'}">Guest</span>
-                    </span>
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="text-white h5 mb-0">
+                            Welcome, <span th:text="${user != null ? user.name : 'Guest'}">Guest</span>
+                        </span>
+                        <form th:action="@{/logout}" method="post" class="mb-0">
+                            <button type="submit" class="btn logout-btn">
+                                <i class="fas fa-sign-out-alt me-2"></i>
+                                Logout
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -77,14 +224,20 @@
             <!-- Main Content Area -->
             <div class="col-lg-8">
                 <div class="main-content p-4">
-                    <div class="row mb-4">
-                        <div class="col-md-6">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
                             <button class="btn new-entry-btn w-100" data-bs-toggle="modal" data-bs-target="#newEntryModal">
                                 <i class="fas fa-plus me-2"></i>
                                 Create New Entry
                             </button>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
+                            <button class="btn export-btn w-100" onclick="exportToPDF()">
+                                <i class="fas fa-file-pdf me-2"></i>
+                                Export to PDF
+                            </button>
+                        </div>
+                        <div class="col-md-4">
                             <form th:action="@{/diary/search}" method="get" class="d-flex">
                                 <input type="date" name="date" class="form-control search-box me-2"
                                        th:value="${searchDate}" placeholder="Search by date">
@@ -95,71 +248,128 @@
                         </div>
                     </div>
 
+                    <!-- Mood Filters -->
+                    <div class="mb-3">
+                        <h6 class="mb-3">Filter by Mood:</h6>
+                        <div class="filter-pills">
+                            <a href="#" class="filter-pill active" data-mood="all">All Moods</a>
+                            <a href="#" class="filter-pill" data-mood="HAPPY">😊 Happy</a>
+                            <a href="#" class="filter-pill" data-mood="SAD">😢 Sad</a>
+                            <a href="#" class="filter-pill" data-mood="EXCITED">🤩 Excited</a>
+                            <a href="#" class="filter-pill" data-mood="CALM">😌 Calm</a>
+                            <a href="#" class="filter-pill" data-mood="ANXIOUS">😰 Anxious</a>
+                            <a href="#" class="filter-pill" data-mood="GRATEFUL">🙏 Grateful</a>
+                        </div>
+                    </div>
+
                     <!-- Entries List -->
                     <div class="row">
                         <div class="col-12">
                             <h3 class="mb-3">
                                 <i class="fas fa-journal-whills me-2"></i>
-                                Recent Entries
+                                <span id="entries-title">Recent Entries</span>
                             </h3>
 
-                            <div th:if="${entries != null and !entries.empty}">
-                                <div th:each="entry : ${entries}" class="card entry-card mb-3">
-                                    <div class="card-body">
-                                        <div class="d-flex justify-content-between align-items-start">
-                                            <div class="flex-grow-1">
-                                                <h5 class="card-title" th:text="${entry.title}">Entry Title</h5>
-                                                <p class="card-text text-muted mb-2">
-                                                    <i class="fas fa-calendar me-2"></i>
-                                                    <span th:text="${#temporals.format(entry.createdDate, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:30</span>
-                                                </p>
-                                                <p class="card-text" th:text="${#strings.abbreviate(entry.content, 150)}">Entry content preview...</p>
-                                            </div>
-                                            <div class="dropdown">
-                                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle"
-                                                        type="button" data-bs-toggle="dropdown">
-                                                    <i class="fas fa-ellipsis-v"></i>
-                                                </button>
-                                                <ul class="dropdown-menu">
-                                                    <li>
-                                                        <a class="dropdown-item" th:href="@{/diary/view/{id}(id=${entry.id})}">
-                                                            <i class="fas fa-eye me-2"></i>View
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" th:href="@{/diary/edit/{id}(id=${entry.id})}">
-                                                            <i class="fas fa-edit me-2"></i>Edit
-                                                        </a>
-                                                    </li>
-                                                    <li><hr class="dropdown-divider"></li>
-                                                    <li>
-                                                        <form th:action="@{/diary/delete/{id}(id=${entry.id})}" method="post">
-                                                            <button type="submit" class="dropdown-item text-danger"
-                                                                    onclick="return confirm('Are you sure you want to delete this entry?')">
-                                                                <i class="fas fa-trash me-2"></i>Delete
-                                                            </button>
-                                                        </form>
-                                                    </li>
-                                                </ul>
+                            <div id="entries-container" style="max-height: calc(100vh - 350px); overflow-y: auto;">
+                                <div th:if="${entries != null and !entries.empty}">
+                                    <div th:each="entry : ${entries}" class="card entry-card mb-3" th:attr="data-mood=${entry.mood}">
+                                        <div class="mood-badge" th:switch="${entry.mood}">
+                                            <span th:case="'HAPPY'">😊</span>
+                                            <span th:case="'SAD'">😢</span>
+                                            <span th:case="'EXCITED'">🤩</span>
+                                            <span th:case="'CALM'">😌</span>
+                                            <span th:case="'ANXIOUS'">😰</span>
+                                            <span th:case="'GRATEFUL'">🙏</span>
+                                            <span th:case="*">😐</span>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-start">
+                                                <div class="flex-grow-1">
+                                                    <h5 class="card-title" th:text="${entry.title}">Entry Title</h5>
+                                                    <p class="card-text text-muted mb-2">
+                                                        <i class="fas fa-calendar me-2"></i>
+                                                        <span th:text="${#temporals.format(entry.createdDate, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:30</span>
+                                                    </p>
+                                                    <p class="card-text" th:text="${#strings.abbreviate(entry.content, 150)}">Entry content preview...</p>
+                                                </div>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                                                            type="button" data-bs-toggle="dropdown">
+                                                        <i class="fas fa-ellipsis-v"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <a class="dropdown-item" th:href="@{/diary/view/{id}(id=${entry.id})}">
+                                                                <i class="fas fa-eye me-2"></i>View
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="dropdown-item" th:href="@{/diary/edit/{id}(id=${entry.id})}">
+                                                                <i class="fas fa-edit me-2"></i>Edit
+                                                            </a>
+                                                        </li>
+                                                        <li><hr class="dropdown-divider"></li>
+                                                        <li>
+                                                            <form th:action="@{/diary/delete/{id}(id=${entry.id})}" method="post">
+                                                                <button type="submit" class="dropdown-item text-danger"
+                                                                        onclick="return confirm('Are you sure you want to delete this entry?')">
+                                                                    <i class="fas fa-trash me-2"></i>Delete
+                                                                </button>
+                                                            </form>
+                                                        </li>
+                                                    </ul>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div th:if="${entries == null or entries.empty}" class="text-center py-5">
-                                <i class="fas fa-book-open fa-3x text-muted mb-3"></i>
-                                <h4 class="text-muted">No entries found</h4>
-                                <p class="text-muted">Start writing your first diary entry!</p>
+                                <div th:if="${entries == null or entries.empty}" class="text-center py-5" id="no-entries">
+                                    <i class="fas fa-book-open fa-3x text-muted mb-3"></i>
+                                    <h4 class="text-muted">No entries found</h4>
+                                    <p class="text-muted">Start writing your first diary entry!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mood Analytics Panel - Moved here below entries -->
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="analytics-panel p-4">
+                                <h4 class="mb-3">
+                                    <i class="fas fa-chart-line me-2"></i>
+                                    Mood Analytics
+                                </h4>
+
+                                <div class="chart-container">
+                                    <canvas id="moodChart"></canvas>
+                                </div>
+
+                                <div class="mt-3">
+                                    <h6>Monthly Mood Trends</h6>
+                                    <div class="chart-container">
+                                        <canvas id="moodTrendChart"></canvas>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Weather Panel -->
+            <!-- Right Sidebar -->
             <div class="col-lg-4">
-                <div class="weather-panel p-4">
+                <!-- Real-Time News Panel -->
+                <div class="news-panel">
+                    <h4><i class="fas fa-newspaper me-2"></i>Latest News</h4>
+                    <ul class="news-list" id="news-list">
+                        <li>Loading news...</li>
+                    </ul>
+                </div>
+
+                <!-- Weather Panel -->
+                <div class="weather-panel p-4 mb-3">
                     <h4 class="mb-3">
                         <i class="fas fa-cloud-sun me-2"></i>
                         Weather Today
@@ -197,16 +407,14 @@
 
                     <div class="mt-4">
                         <h6>Quick Stats</h6>
-                        <div class="row">
-                            <div class="col-12 mb-2">
-                                <small>Total Entries: <span th:text="${totalEntries != null ? totalEntries : 0}">0</span></small>
-                            </div>
-                            <div class="col-12 mb-2">
-                                <small>This Month: <span th:text="${entriesThisMonth != null ? entriesThisMonth : 0}">0</span></small>
-                            </div>
-                            <div class="col-12">
-                                <small>Last Entry: <span th:text="${lastEntryDate != null ? lastEntryDate : 'Never'}">Never</span></small>
-                            </div>
+                        <div class="stat-card">
+                            <small>Total Entries: <span th:text="${totalEntries != null ? totalEntries : 0}">0</span></small>
+                        </div>
+                        <div class="stat-card">
+                            <small>This Month: <span th:text="${entriesThisMonth != null ? entriesThisMonth : 0}">0</span></small>
+                        </div>
+                        <div class="stat-card">
+                            <small>Last Entry: <span th:text="${lastEntryDate != null ? lastEntryDate : 'Never'}">Never</span></small>
                         </div>
                     </div>
                 </div>
@@ -245,8 +453,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <label for="entryDate" class="form-label">Date</label>
-                                        <input type="date" class="form-control" id="entryDate" th:field="*{entryDate}"
-                                               th:value="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}">
+                                        <input type="date" class="form-control" id="entryDate" th:field="*{entryDate}" required>
                                     </div>
                                 </div>
                             </div>
@@ -263,8 +470,194 @@
     </div>
 </div>
 
-<!-- Weather Fetch with Geolocation Script -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 <script>
+    // Dynamic data from /api/mood-analytics
+    document.addEventListener('DOMContentLoaded', function () {
+        fetch('/api/mood-analytics')
+            .then(response => response.json())
+            .then(data => {
+                const moodStats = data.moodDistribution || {};
+                const monthlyTrends = data.monthlyTrends || {};
+
+                // Convert moodStats to Chart.js format
+                const labels = Object.keys(moodStats);
+                const values = Object.values(moodStats);
+
+                const moodChartCtx = document.getElementById('moodChart').getContext('2d');
+                new Chart(moodChartCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: values,
+                            backgroundColor: [
+                                '#28a745', '#dc3545', '#ffc107', '#17a2b8', '#fd7e14', '#6f42c1'
+                            ],
+                            borderWidth: 2,
+                            borderColor: '#fff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    color: '#fff',
+                                    font: { size: 10 }
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // Build mood trend chart data
+                const trendLabels = Object.keys(monthlyTrends);
+                const trendMoodMap = {};
+
+                trendLabels.forEach(month => {
+                    const moods = monthlyTrends[month];
+                    for (let mood in moods) {
+                        if (!trendMoodMap[mood]) trendMoodMap[mood] = [];
+                        trendMoodMap[mood].push(moods[mood]);
+                    }
+                });
+
+                const colors = {
+                    HAPPY: '#28a745',
+                    SAD: '#dc3545',
+                    EXCITED: '#ffc107',
+                    CALM: '#17a2b8',
+                    ANXIOUS: '#fd7e14',
+                    GRATEFUL: '#6f42c1'
+                };
+
+                const moodTrendChartCtx = document.getElementById('moodTrendChart').getContext('2d');
+                new Chart(moodTrendChartCtx, {
+                    type: 'line',
+                    data: {
+                        labels: trendLabels,
+                        datasets: Object.keys(trendMoodMap).map(mood => ({
+                            label: mood.charAt(0) + mood.slice(1).toLowerCase(),
+                            data: trendMoodMap[mood],
+                            borderColor: colors[mood] || '#ccc',
+                            backgroundColor: 'rgba(255,255,255,0.05)',
+                            tension: 0.4
+                        }))
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    color: '#fff',
+                                    font: { size: 10 }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                ticks: { color: '#fff' },
+                                grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                            },
+                            y: {
+                                ticks: { color: '#fff' },
+                                grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching mood analytics:', error);
+            });
+    });
+
+    // Mood Filter Functionality
+    document.querySelectorAll('.filter-pill').forEach(pill => {
+        pill.addEventListener('click', function(e) {
+            e.preventDefault();
+            document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+            this.classList.add('active');
+
+            const selectedMood = this.getAttribute('data-mood');
+            const entries = document.querySelectorAll('.entry-card');
+            const entriesTitle = document.getElementById('entries-title');
+            const noEntriesDiv = document.getElementById('no-entries');
+
+            let visibleCount = 0;
+            entries.forEach(entry => {
+                const entryMood = entry.getAttribute('data-mood');
+                if (selectedMood === 'all' || entryMood === selectedMood) {
+                    entry.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    entry.style.display = 'none';
+                }
+            });
+
+            if (selectedMood === 'all') {
+                entriesTitle.textContent = 'Recent Entries';
+            } else {
+                const moodText = this.textContent.trim();
+                entriesTitle.textContent = `${moodText} Entries`;
+            }
+
+            if (visibleCount === 0) {
+                noEntriesDiv.style.display = 'block';
+                noEntriesDiv.querySelector('h4').textContent = 'No entries found for this mood';
+            } else {
+                noEntriesDiv.style.display = 'none';
+            }
+        });
+    });
+
+    // PDF Export Functionality
+    function exportToPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        doc.setFontSize(20);
+        doc.text('My Diary Entries', 20, 20);
+        doc.setFontSize(12);
+        doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, 30);
+
+        let yPosition = 50;
+        const entries = document.querySelectorAll('.entry-card:not([style*="display: none"])');
+
+        entries.forEach((entry, index) => {
+            if (yPosition > 250) {
+                doc.addPage();
+                yPosition = 20;
+            }
+
+            const title = entry.querySelector('.card-title').textContent;
+            const date = entry.querySelector('.card-text .fas.fa-calendar').nextSibling.textContent.trim();
+            const content = entry.querySelector('.card-text:last-child').textContent;
+            const mood = entry.querySelector('.mood-badge').textContent;
+
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.text(`${index + 1}. ${title}`, 20, yPosition);
+
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            doc.text(`Date: ${date} | Mood: ${mood}`, 20, yPosition + 8);
+
+            doc.setFontSize(11);
+            const splitContent = doc.splitTextToSize(content, 170);
+            doc.text(splitContent, 20, yPosition + 18);
+
+            yPosition += 18 + (splitContent.length * 5) + 15;
+        });
+
+        doc.save('my-diary-entries.pdf');
+    }
+
+    // Initialize other functionalities
     window.addEventListener('DOMContentLoaded', () => {
         const urlParams = new URLSearchParams(window.location.search);
         if (!urlParams.has('lat') && !urlParams.has('lon')) {
@@ -279,13 +672,40 @@
                         console.warn("Location access denied or failed: ", error.message);
                     }
                 );
-            } else {
-                console.warn("Geolocation is not supported by this browser.");
             }
         }
-    });
-</script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+        const entryDateInput = document.getElementById('entryDate');
+        if (entryDateInput) {
+            const today = new Date().toISOString().split('T')[0];
+            entryDateInput.max = today;
+        }
+    });
+
+    async function loadNews() {
+        try {
+            const res = await fetch("/api/news");
+            const data = await res.json();
+            console.log(data);
+            const newsList = document.getElementById("news-list");
+            newsList.innerHTML = "";
+
+            if (data.articles && data.articles.length > 0) {
+                data.articles.forEach(article => {
+                    const li = document.createElement("li");
+                    li.innerHTML = `<a href="${article.url}" target="_blank">${article.title}</a>`;
+                    newsList.appendChild(li);
+                });
+            } else {
+                newsList.innerHTML = "<li>No news available right now.</li>";
+            }
+        } catch (err) {
+            console.error("Failed to load news:", err);
+            document.getElementById("news-list").innerHTML = "<li>Error fetching news.</li>";
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", loadNews);
+</script>
 </body>
 </html>

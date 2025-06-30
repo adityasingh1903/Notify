@@ -19,6 +19,7 @@
             color: #333;
         }
 
+        /* STANDARDIZED NAVBAR - Same as Home Page */
         .navbar {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
@@ -64,8 +65,7 @@
             transition: color 0.3s ease;
         }
 
-        .nav-link:hover,
-        .nav-link.active {
+        .nav-link:hover {
             color: #4c63d2;
         }
 
@@ -356,73 +356,13 @@
         .footer {
             background: #2c3e50;
             color: white;
-            padding: 3rem 2rem 2rem;
+            padding: 2rem;
             text-align: center;
         }
 
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .footer-link {
-            color: #bdc3c7;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .footer-link:hover {
-            color: white;
-        }
-
-        .footer-social {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .social-icon {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            color: white;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .social-icon:hover {
-            background: #4c63d2;
-            transform: translateY(-2px);
-        }
-
-        .footer-copyright {
-            color: #95a5a6;
-            font-size: 0.9rem;
-            border-top: 1px solid #34495e;
-            padding-top: 2rem;
-        }
-
         @media (max-width: 768px) {
-            .nav-container {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
             .nav-links {
-                flex-wrap: wrap;
-                justify-content: center;
+                display: none;
             }
 
             .hero-title {
@@ -446,29 +386,40 @@
                 grid-template-columns: 1fr;
             }
 
-            .footer-links {
-                flex-direction: column;
-                gap: 1rem;
+            .navbar {
+                padding: 1rem;
+            }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
     </style>
 </head>
 <body>
-<!-- Navigation -->
+<!-- Navigation - STANDARDIZED TO MATCH HOME PAGE -->
 <nav class="navbar">
     <div class="nav-container">
-        <a href="/" class="logo">
+        <a href="#" class="logo" th:href="@{/}">
             <i class="fas fa-book-open"></i>
             Notify
         </a>
         <div class="nav-links">
-            <a href="/" class="nav-link">Home</a>
-            <a href="/about" class="nav-link active">About</a>
-            <a href="/features" class="nav-link">Features</a>
-            <a href="/contact" class="nav-link">Contact</a>
-            <a href="/login" class="auth-btn">
-                <i class="fas fa-sign-in-alt"></i>
-                Login
+            <a href="#" class="nav-link" th:href="@{/features}">Features</a>
+            <a href="#" class="nav-link" th:href="@{/about}">About</a>
+            <a href="#" class="nav-link" th:href="@{/contact}">Contact</a>
+            <a href="#" class="auth-btn" th:href="@{/login}">
+                <i class="fas fa-user"></i>
+                Sign In
             </a>
         </div>
     </div>
@@ -476,8 +427,8 @@
 
 <!-- Hero Section -->
 <section class="hero-section">
-    <h1 class="hero-title">About Notify</h1>
-    <p class="hero-subtitle">
+    <h1 class="hero-title fade-in">About Notify</h1>
+    <p class="hero-subtitle fade-in">
         Empowering individuals to capture, reflect, and grow through the power of digital journaling.
         Your thoughts, your memories, your story - beautifully preserved.
     </p>
@@ -612,7 +563,7 @@
         <p class="cta-subtitle">
             Join thousands of users who have already discovered the power of digital journaling with Notify.
         </p>
-        <a href="/register" class="cta-button">
+        <a href="#" class="cta-button" th:href="@{/signup}">
             <i class="fas fa-pen"></i>
             Start Writing Today
         </a>
@@ -621,23 +572,43 @@
 
 <!-- Footer -->
 <footer class="footer">
-    <div class="footer-content">
-        <div class="footer-links">
-            <a href="/privacy" class="footer-link">Privacy Policy</a>
-            <a href="/terms" class="footer-link">Terms of Service</a>
-            <a href="/help" class="footer-link">Help Center</a>
-            <a href="/contact" class="footer-link">Contact Us</a>
-        </div>
-        <div class="footer-social">
-            <a href="https://twitter.com/notify" class="social-icon" target="_blank"><i class="fab fa-twitter"></i></a>
-            <a href="https://facebook.com/notify" class="social-icon" target="_blank"><i class="fab fa-facebook"></i></a>
-            <a href="https://instagram.com/notify" class="social-icon" target="_blank"><i class="fab fa-instagram"></i></a>
-            <a href="https://linkedin.com/company/notify" class="social-icon" target="_blank"><i class="fab fa-linkedin"></i></a>
-        </div>
-        <div class="footer-copyright">
-            <p>&copy; 2025 Notify Digital Diary Platform. All rights reserved.</p>
-        </div>
-    </div>
+    <p>&copy; 2025 Notify. All rights reserved. Made with <i class="fas fa-heart" style="color: #e74c3c;"></i> for digital storytellers.</p>
 </footer>
+
+<script>
+    // Smooth scrolling and animations
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animate elements on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationDelay = '0.2s';
+                    entry.target.classList.add('fade-in');
+                }
+            });
+        }, observerOptions);
+
+        // Observe value cards and team cards
+        document.querySelectorAll('.value-card, .team-card').forEach(card => {
+            observer.observe(card);
+        });
+
+        // Add hover effects for better interactivity
+        document.querySelectorAll('.value-card, .team-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-12px) scale(1.02)';
+            });
+
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    });
+</script>
 </body>
 </html>

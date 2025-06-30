@@ -2,23 +2,26 @@ package com.notify.service;
 
 import com.notify.model.DiaryEntry;
 import com.notify.model.User;
+import com.notify.model.Mood;
 import com.notify.repository.DiaryEntryRepository;
 import com.notify.util.EncryptionUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class DiaryService {
 
-    @Autowired
-    private DiaryEntryRepository diaryEntryRepository;
+    private final DiaryEntryRepository diaryEntryRepository;
+
+    public DiaryService(DiaryEntryRepository diaryEntryRepository) {
+        this.diaryEntryRepository = diaryEntryRepository;
+    }
 
     public List<DiaryEntry> getRecentEntries(User user) {
         List<DiaryEntry> entries = diaryEntryRepository.findByUserOrderByCreatedDateDesc(user, PageRequest.of(0, 10));
@@ -79,7 +82,6 @@ public class DiaryService {
         return "Never";
     }
 
-    // 🔓 Helper to decrypt a single entry safely
     private DiaryEntry decryptEntry(DiaryEntry entry) {
         try {
             entry.setTitle(EncryptionUtil.decrypt(entry.getTitle()));
@@ -92,10 +94,96 @@ public class DiaryService {
         return entry;
     }
 
-    // 🔓 Helper to decrypt a list of entries safely
     private void decryptEntries(List<DiaryEntry> entries) {
         for (DiaryEntry entry : entries) {
             decryptEntry(entry);
         }
+    }
+
+    public List<DiaryEntry> getRecentEntriesByMood(User user, String mood) {
+        Mood moodEnum;
+        try {
+            moodEnum = Mood.valueOf(mood.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return List.of();
+        }
+
+        List<DiaryEntry> entries = diaryEntryRepository.findByUserAndMoodOrderByCreatedDateDesc(user, moodEnum, PageRequest.of(0, 10));
+        decryptEntries(entries);
+        return entries;
+    }
+
+    public List<DiaryEntry> getAllEntriesByMood(User user, String mood) {
+        Mood moodEnum;
+        try {
+            moodEnum = Mood.valueOf(mood.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return List.of();
+        }
+
+        List<DiaryEntry> entries = diaryEntryRepository.findByUserAndMoodOrderByCreatedDateDesc(user, moodEnum);
+        decryptEntries(entries);
+        return entries;
+    }
+
+    public List<DiaryEntry> getEntriesByDateAndMood(User user, LocalDate date, String mood) {
+        Mood moodEnum;
+        try {
+            moodEnum = Mood.valueOf(mood.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return List.of();
+        }
+
+        LocalDateTime startOfDay = date.atStartOfDay();
+        LocalDateTime endOfDay = date.atTime(23, 59, 59);
+
+        List<DiaryEntry> entries = diaryEntryRepository.findByUserAndMoodAndCreatedDateBetweenOrderByCreatedDateDesc(
+                user, moodEnum, startOfDay, endOfDay);
+        decryptEntries(entries);
+        return entries;
+    }
+
+    public Map<String, Long> getMoodStatistics(User user) {
+        List<DiaryEntry> entries = diaryEntryRepository.findByUser(user);
+
+        return entries.stream()
+                .filter(entry -> entry.getMood() != null)
+                .collect(Collectors.groupingBy(
+                        entry -> entry.getMood().toString(),
+                        Collectors.counting()
+                ));
+    }
+
+    public Map<String, Map<String, Long>> getMonthlyMoodTrends(User user) {
+        LocalDateTime sixMonthsAgo = LocalDateTime.now().minusMonths(6);
+        List<DiaryEntry> entries = diaryEntryRepository.findByUserAndCreatedDateAfterOrderByCreatedDateDesc(user, sixMonthsAgo);
+
+        Map<String, Map<String, Long>> monthlyTrends = new HashMap<>();
+
+        entries.stream()
+                .filter(entry -> entry.getMood() != null)
+                .forEach(entry -> {
+                    String monthKey = entry.getCreatedDate().format(DateTimeFormatter.ofPattern("MMM yyyy"));
+                    String mood = entry.getMood().toString();
+
+                    monthlyTrends.computeIfAbsent(monthKey, k -> new HashMap<>())
+                            .merge(mood, 1L, Long::sum);
+                });
+
+        return monthlyTrends;
+    }
+
+    public Map<String, String> getRecentMoodPattern(User user, int days) {
+        LocalDateTime nDaysAgo = LocalDateTime.now().minusDays(days);
+        List<DiaryEntry> entries = diaryEntryRepository.findByUserAndCreatedDateAfterOrderByCreatedDateDesc(user, nDaysAgo);
+
+        return entries.stream()
+                .filter(entry -> entry.getMood() != null)
+                .collect(Collectors.toMap(
+                        entry -> entry.getCreatedDate().format(DateTimeFormatter.ofPattern("dd/MM")),
+                        entry -> entry.getMood().toString(),
+                        (existing, replacement) -> existing,
+                        LinkedHashMap::new
+                ));
     }
 }

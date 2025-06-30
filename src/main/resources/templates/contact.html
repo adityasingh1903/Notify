@@ -3,329 +3,559 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Us - WeatherDiary</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <title>Contact Us - Notify Digital Diary Platform</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
         }
 
+        /* STANDARDIZED NAVBAR - Same as About Page */
         .navbar {
-            background: rgba(255, 255, 255, 0.1) !important;
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
 
-        .navbar-brand, .nav-link {
-            color: white !important;
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #4c63d2;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo i {
+            font-size: 1.8rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #666;
             font-weight: 500;
+            transition: color 0.3s ease;
         }
 
         .nav-link:hover {
-            color: #ffd700 !important;
-            transform: translateY(-2px);
+            color: #4c63d2;
+        }
+
+        .nav-link.active {
+            color: #4c63d2;
+            font-weight: 600;
+        }
+
+        .auth-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
             transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .auth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
         }
 
         .hero-section {
-            padding: 80px 0;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
             text-align: center;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 800;
             color: white;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        .content-section {
+            background: white;
+            padding: 4rem 2rem;
+            margin-top: 1rem;
+        }
+
+        .content-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
         }
 
         .contact-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
             overflow: hidden;
         }
 
-        .contact-header {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            padding: 30px;
-            text-align: center;
+        .contact-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+            transition: left 0.6s;
         }
 
-        .contact-info {
-            padding: 40px;
+        .contact-card:hover::before {
+            left: 100%;
         }
 
-        .contact-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 25px;
-            padding: 20px;
-            border-radius: 15px;
-            background: rgba(102, 126, 234, 0.05);
-            transition: all 0.3s ease;
-        }
-
-        .contact-item:hover {
-            background: rgba(102, 126, 234, 0.1);
-            transform: translateX(10px);
+        .contact-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border-color: #4c63d2;
         }
 
         .contact-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            margin-right: 20px;
-            font-size: 1.5rem;
+            font-size: 3rem;
+            color: #4c63d2;
+            margin-bottom: 1rem;
+        }
+
+        .contact-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .contact-info {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-info strong {
+            color: #333;
         }
 
         .founder-section {
-            background: linear-gradient(45deg, #ffd700, #ffed4e);
-            padding: 30px;
-            border-radius: 15px;
-            margin: 30px 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 3rem;
             text-align: center;
+            color: white;
+            margin-bottom: 3rem;
         }
 
         .founder-avatar {
             width: 100px;
             height: 100px;
             border-radius: 50%;
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 20px;
-            color: white;
+            margin: 0 auto 1.5rem;
             font-size: 2.5rem;
+            color: white;
+            border: 3px solid rgba(255, 255, 255, 0.3);
         }
 
-        .floating-elements {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -1;
+        .founder-name {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
         }
 
-        .floating-element {
-            position: absolute;
-            opacity: 0.1;
-            animation: float 6s ease-in-out infinite;
+        .founder-role {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
         }
 
-        .floating-element:nth-child(1) {
-            top: 10%;
-            left: 10%;
-            animation-delay: 0s;
+        .founder-description {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            opacity: 0.95;
         }
 
-        .floating-element:nth-child(2) {
-            top: 20%;
-            right: 10%;
-            animation-delay: 2s;
+        .quick-help-section {
+            margin-bottom: 4rem;
         }
 
-        .floating-element:nth-child(3) {
-            bottom: 10%;
-            left: 20%;
-            animation-delay: 4s;
+        .help-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-        }
-
-        .btn-primary {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            border: none;
-            border-radius: 25px;
-            padding: 12px 30px;
-            font-weight: 500;
+        .help-card {
+            background: white;
+            border: 2px solid #f0f0f0;
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
             transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
         }
 
-        .btn-primary:hover {
+        .help-card:hover {
+            transform: translateY(-8px);
+            border-color: #4c63d2;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .help-icon {
+            font-size: 3rem;
+            color: #4c63d2;
+            margin-bottom: 1rem;
+        }
+
+        .help-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .help-description {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .cta-buttons {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0 0.5rem;
+        }
+
+        .cta-button:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .cta-button.outline {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+        }
+
+        .cta-button.outline:hover {
+            background: white;
+            color: #4c63d2;
+        }
+
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .help-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .navbar {
+                padding: 1rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .cta-button {
+                margin: 0.5rem 0;
+            }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
 <body>
-<!-- Floating Background Elements -->
-<div class="floating-elements">
-    <div class="floating-element">
-        <i class="fas fa-cloud fa-3x"></i>
-    </div>
-    <div class="floating-element">
-        <i class="fas fa-sun fa-3x"></i>
-    </div>
-    <div class="floating-element">
-        <i class="fas fa-book fa-3x"></i>
-    </div>
-</div>
-
-<!-- Navigation -->
-<nav class="navbar navbar-expand-lg fixed-top">
-    <div class="container">
-        <a class="navbar-brand" href="/">
-            <i class="fas fa-book-open me-2"></i>WeatherDiary
+<!-- Navigation - STANDARDIZED TO MATCH ABOUT PAGE -->
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="#" class="logo" th:href="@{/}">
+            <i class="fas fa-book-open"></i>
+            Notify
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="/">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/features">Features</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/about">About</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" href="/contact">Contact</a>
-                </li>
-            </ul>
+        <div class="nav-links">
+            <a href="#" class="nav-link" th:href="@{/features}">Features</a>
+            <a href="#" class="nav-link" th:href="@{/about}">About</a>
+            <a href="#" class="nav-link active" th:href="@{/contact}">Contact</a>
+            <a href="#" class="auth-btn" th:href="@{/login}">
+                <i class="fas fa-user"></i>
+                Sign In
+            </a>
         </div>
     </div>
 </nav>
 
 <!-- Hero Section -->
 <section class="hero-section">
-    <div class="container">
-        <h1 class="display-4 mb-4">
-            <i class="fas fa-phone-alt me-3"></i>Get in Touch
-        </h1>
-        <p class="lead">We'd love to hear from you! Reach out to us anytime.</p>
-    </div>
+    <h1 class="hero-title fade-in">Get in Touch</h1>
+    <p class="hero-subtitle fade-in">
+        We're here to help you with any questions or support you need.
+        Reach out to us anytime and we'll get back to you as soon as possible.
+    </p>
 </section>
 
-<!-- Contact Information -->
-<section class="py-5">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="contact-card">
-                    <!-- Contact Header -->
-                    <div class="contact-header">
-                        <h2><i class="fas fa-envelope me-3"></i>Contact Information</h2>
-                        <p class="mb-0">Ready to help you with your diary and weather needs</p>
+<!-- Main Content -->
+<section class="content-section">
+    <div class="content-container">
+
+        <!-- Founder Section -->
+        <div class="founder-section">
+            <div class="founder-avatar">
+                <i class="fas fa-user-tie"></i>
+            </div>
+            <h2 class="founder-name">Aditya Singh</h2>
+            <p class="founder-role">CEO & Founder</p>
+            <p class="founder-description">
+                Leading innovation in notification management and smart alert systems.
+                Passionate about creating meaningful digital experiences that help people stay connected and organized.
+            </p>
+        </div>
+
+        <!-- Contact Information -->
+        <h2 class="section-title">Contact Information</h2>
+        <div class="contact-grid">
+            <div class="contact-card">
+                <div class="contact-icon">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <h3 class="contact-title">Customer Care Support</h3>
+                <p class="contact-info"><strong>Phone:</strong> +91 9142738359</p>
+                <p class="contact-info">Available Monday - Friday</p>
+                <p class="contact-info">9:00 AM - 6:00 PM IST</p>
+            </div>
+
+            <div class="contact-card">
+                <div class="contact-icon">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <h3 class="contact-title">Email Support</h3>
+                <p class="contact-info"><strong>Email:</strong> supportNotify@gmail.com</p>
+                <p class="contact-info">We'll respond within 24 hours</p>
+                <p class="contact-info">For all inquiries and support</p>
+            </div>
+
+            <div class="contact-card">
+                <div class="contact-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <h3 class="contact-title">Office Location</h3>
+                <p class="contact-info"><strong>Address:</strong> Notify Headquarters</p>
+                <p class="contact-info">Ludhiana, Punjab, India</p>
+                <p class="contact-info">Visit us during business hours</p>
+            </div>
+
+            <div class="contact-card">
+                <div class="contact-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <h3 class="contact-title">Business Hours</h3>
+                <p class="contact-info"><strong>Monday - Friday:</strong> 9:00 AM - 6:00 PM</p>
+                <p class="contact-info"><strong>Saturday:</strong> 10:00 AM - 4:00 PM</p>
+                <p class="contact-info"><strong>Sunday:</strong> Closed</p>
+            </div>
+        </div>
+
+        <!-- Quick Help Section -->
+        <div class="quick-help-section">
+            <h2 class="section-title">How Can We Help?</h2>
+            <div class="help-grid">
+                <div class="help-card">
+                    <div class="help-icon">
+                        <i class="fas fa-question-circle"></i>
                     </div>
+                    <h3 class="help-title">General Inquiries</h3>
+                    <p class="help-description">
+                        Questions about our notification app features, pricing, or general information about Notify.
+                    </p>
+                </div>
 
-                    <!-- Founder Section -->
-                    <div class="contact-info">
-                        <div class="founder-section">
-                            <div class="founder-avatar">
-                                <i class="fas fa-user-tie"></i>
-                            </div>
-                            <h3 class="mb-2">Aditya Singh</h3>
-                            <h5 class="text-muted mb-3">CEO & Founder</h5>
-                            <p class="mb-0">Leading innovation in personal diary management with integrated weather tracking</p>
-                        </div>
-
-                        <!-- Contact Details -->
-                        <div class="contact-item">
-                            <div class="contact-icon">
-                                <i class="fas fa-headset"></i>
-                            </div>
-                            <div>
-                                <h5 class="mb-1">Customer Care Support</h5>
-                                <p class="mb-1"><strong>Phone:</strong> +91 9142738359</p>
-                                <p class="mb-0 text-muted">Available Monday - Friday, 9:00 AM - 6:00 PM IST</p>
-                            </div>
-                        </div>
-
-                        <div class="contact-item">
-                            <div class="contact-icon">
-                                <i class="fas fa-envelope"></i>
-                            </div>
-                            <div>
-                                <h5 class="mb-1">Email Support</h5>
-                                <p class="mb-1"><strong>Email:</strong> support@weatherdiary.com</p>
-                                <p class="mb-0 text-muted">We'll respond within 24 hours</p>
-                            </div>
-                        </div>
-
-                        <div class="contact-item">
-                            <div class="contact-icon">
-                                <i class="fas fa-map-marker-alt"></i>
-                            </div>
-                            <div>
-                                <h5 class="mb-1">Office Location</h5>
-                                <p class="mb-1"><strong>Address:</strong> WeatherDiary Headquarters</p>
-                                <p class="mb-0 text-muted">Ludhiana, Punjab, India</p>
-                            </div>
-                        </div>
-
-                        <div class="contact-item">
-                            <div class="contact-icon">
-                                <i class="fas fa-clock"></i>
-                            </div>
-                            <div>
-                                <h5 class="mb-1">Business Hours</h5>
-                                <p class="mb-1"><strong>Monday - Friday:</strong> 9:00 AM - 6:00 PM</p>
-                                <p class="mb-1"><strong>Saturday:</strong> 10:00 AM - 4:00 PM</p>
-                                <p class="mb-0"><strong>Sunday:</strong> Closed</p>
-                            </div>
-                        </div>
-
-                        <!-- Call to Action -->
-                        <div class="text-center mt-4">
-                            <a href="tel:+919142738359" class="btn btn-primary btn-lg me-3">
-                                <i class="fas fa-phone me-2"></i>Call Now
-                            </a>
-                            <a href="mailto:support@weatherdiary.com" class="btn btn-outline-primary btn-lg">
-                                <i class="fas fa-envelope me-2"></i>Send Email
-                            </a>
-                        </div>
+                <div class="help-card">
+                    <div class="help-icon">
+                        <i class="fas fa-bug"></i>
                     </div>
+                    <h3 class="help-title">Technical Support</h3>
+                    <p class="help-description">
+                        Having issues with alerts, app functionality, or need help with troubleshooting technical problems.
+                    </p>
+                </div>
+
+                <div class="help-card">
+                    <div class="help-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3 class="help-title">Feature Requests</h3>
+                    <p class="help-description">
+                        Suggest new features for Notify or share ideas on how we can improve your experience.
+                    </p>
                 </div>
             </div>
+        </div>
+
+        <!-- Contact Buttons -->
+        <div class="cta-buttons">
+            <a href="tel:+919142738359" class="cta-button">
+                <i class="fas fa-phone"></i>
+                Call Now
+            </a>
+            <a href="mailto:supportNotify@gmail.com" class="cta-button outline">
+                <i class="fas fa-envelope"></i>
+                Send Email
+            </a>
         </div>
     </div>
 </section>
 
-<!-- Quick Contact Section -->
-<section class="py-5">
-    <div class="container text-center text-white">
-        <h3 class="mb-4">Need Immediate Help?</h3>
-        <div class="row">
-            <div class="col-md-4 mb-3">
-                <div class="p-4">
-                    <i class="fas fa-question-circle fa-3x mb-3"></i>
-                    <h5>General Inquiries</h5>
-                    <p>Questions about our diary app features</p>
-                </div>
-            </div>
-            <div class="col-md-4 mb-3">
-                <div class="p-4">
-                    <i class="fas fa-bug fa-3x mb-3"></i>
-                    <h5>Technical Support</h5>
-                    <p>Having issues with weather data or app functionality</p>
-                </div>
-            </div>
-            <div class="col-md-4 mb-3">
-                <div class="p-4">
-                    <i class="fas fa-lightbulb fa-3x mb-3"></i>
-                    <h5>Feature Requests</h5>
-                    <p>Suggest new features for WeatherDiary</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+<!-- Footer -->
+<footer class="footer">
+    <p>&copy; 2025 Notify. All rights reserved. Made with <i class="fas fa-heart" style="color: #e74c3c;"></i> for digital storytellers.</p>
+</footer>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Smooth scrolling and animations
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animate elements on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationDelay = '0.2s';
+                    entry.target.classList.add('fade-in');
+                }
+            });
+        }, observerOptions);
+
+        // Observe contact cards and help cards
+        document.querySelectorAll('.contact-card, .help-card').forEach(card => {
+            observer.observe(card);
+        });
+
+        // Add hover effects for better interactivity
+        document.querySelectorAll('.contact-card, .help-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-12px) scale(1.02)';
+            });
+
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    });
+</script>
 </body>
 </html>
