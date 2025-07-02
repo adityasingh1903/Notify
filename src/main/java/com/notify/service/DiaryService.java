@@ -35,10 +35,16 @@ public class DiaryService {
         return entries;
     }
 
-    public List<DiaryEntry> getEntriesByDate(User user, LocalDate date) {
+    // ✅ Correct param order: (LocalDate, User) for controller compatibility
+    public List<DiaryEntry> getEntriesByDate(LocalDate date, User user) {
         List<DiaryEntry> entries = diaryEntryRepository.findByUserAndEntryDate(user, date);
         decryptEntries(entries);
         return entries;
+    }
+
+    // Optional: Overloaded to maintain old usage
+    public List<DiaryEntry> getEntriesByDate(User user, LocalDate date) {
+        return getEntriesByDate(date, user);
     }
 
     public Optional<DiaryEntry> getEntryById(Long id, User user) {

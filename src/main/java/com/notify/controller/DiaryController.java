@@ -5,6 +5,7 @@ import com.notify.model.User;
 import com.notify.repository.UserRepository;
 import com.notify.security.CustomUserDetails;
 import com.notify.service.DiaryService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.validation.Valid;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -84,20 +87,17 @@ public class DiaryController {
         if (entry.isPresent()) {
             DiaryEntry diaryEntry = entry.get();
 
-            // ✅ Convert LocalDateTime to java.util.Date for Thymeleaf formatting
             java.util.Date createdDate = java.util.Date.from(
                     diaryEntry.getCreatedDate().atZone(java.time.ZoneId.systemDefault()).toInstant()
             );
 
             model.addAttribute("entry", diaryEntry);
-            model.addAttribute("createdDate", createdDate);  // ✅ Add to model
-
+            model.addAttribute("createdDate", createdDate);
             return "diary/edit";
         } else {
             return "redirect:/dashboard?error=Entry not found";
         }
     }
-
 
     @PostMapping("/update/{id}")
     public String updateEntry(@PathVariable Long id,
@@ -120,10 +120,6 @@ public class DiaryController {
         if (existingEntry.isPresent()) {
             DiaryEntry entry = existingEntry.get();
 
-            // Logging to debug the null issue
-            System.out.println("Incoming entryDate: " + updatedEntry.getEntryDate());
-
-            // ✅ Defensive check
             if (updatedEntry.getEntryDate() == null) {
                 redirectAttributes.addFlashAttribute("error", "Entry date cannot be empty");
                 return "redirect:/diary/edit/" + id;
@@ -143,7 +139,6 @@ public class DiaryController {
         return "redirect:/dashboard";
     }
 
-
     @PostMapping("/delete/{id}")
     public String deleteEntry(@PathVariable Long id,
                               @AuthenticationPrincipal CustomUserDetails userDetails,
@@ -151,7 +146,6 @@ public class DiaryController {
 
         User user = userRepository.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
 
         try {
             diaryService.deleteEntry(id, user);

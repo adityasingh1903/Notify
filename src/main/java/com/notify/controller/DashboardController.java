@@ -46,7 +46,6 @@ public class DashboardController {
 
         User user = getUser(userDetails);
 
-        // Diary Entries
         List<DiaryEntry> entries = (moodFilter != null && !moodFilter.equalsIgnoreCase("all"))
                 ? diaryService.getRecentEntriesByMood(user, moodFilter)
                 : diaryService.getRecentEntries(user);
@@ -55,14 +54,12 @@ public class DashboardController {
         model.addAttribute("entries", entries);
         model.addAttribute("selectedMood", moodFilter != null ? moodFilter : "all");
 
-        // Stats
         model.addAttribute("totalEntries", diaryService.getTotalEntries(user));
         model.addAttribute("entriesThisMonth", diaryService.getEntriesThisMonth(user));
         model.addAttribute("lastEntryDate", diaryService.getLastEntryDate(user));
         model.addAttribute("moodStats", diaryService.getMoodStatistics(user));
         model.addAttribute("monthlyTrends", diaryService.getMonthlyMoodTrends(user));
 
-        // Weather
         Weather weather = (lat != null && lon != null)
                 ? weatherService.getWeatherByCoordinates(lat, lon)
                 : weatherService.getCurrentWeather();
@@ -73,7 +70,7 @@ public class DashboardController {
     }
 
     @GetMapping("/diary/search")
-    public String searchEntries(@RequestParam("date") String dateString,
+    public String searchEntries(@RequestParam(value = "date", required = false) String dateString,
                                 @RequestParam(value = "lat", required = false) Double lat,
                                 @RequestParam(value = "lon", required = false) Double lon,
                                 @RequestParam(value = "mood", required = false) String moodFilter,
@@ -83,36 +80,58 @@ public class DashboardController {
         User user = getUser(userDetails);
         model.addAttribute("user", user);
 
-        try {
-            LocalDate searchDate = LocalDate.parse(dateString);
-            List<DiaryEntry> entries = (moodFilter != null && !moodFilter.equalsIgnoreCase("all"))
-                    ? diaryService.getEntriesByDateAndMood(user, searchDate, moodFilter)
-                    : diaryService.getEntriesByDate(user, searchDate);
+        List<DiaryEntry> entries;
 
-            model.addAttribute("entries", entries);
-            model.addAttribute("searchDate", dateString);
+        if (dateString == null || dateString.isBlank()) {
+            // ✅ If no date provided, fallback to recent entries (like dashboard)
+            entries = (moodFilter != null && !moodFilter.equalsIgnoreCase("all"))
+                    ? diaryService.getRecentEntriesByMood(user, moodFilter)
+                    : diaryService.getRecentEntries(user);
+
             model.addAttribute("selectedMood", moodFilter != null ? moodFilter : "all");
-        } catch (Exception e) {
-            model.addAttribute("entries", List.of());
-            model.addAttribute("error", "Invalid date format");
-            model.addAttribute("selectedMood", "all");
+        } else {
+            try {
+                LocalDate searchDate = LocalDate.parse(dateString);
+
+                entries = (moodFilter != null && !moodFilter.equalsIgnoreCase("all"))
+                        ? diaryService.getEntriesByDateAndMood(user, searchDate, moodFilter)
+                        : diaryService.getEntriesByDate(user, searchDate);
+
+                model.addAttribute("searchDate", dateString);
+                model.addAttribute("selectedMood", moodFilter != null ? moodFilter : "all");
+            } catch (Exception e) {
+                model.addAttribute("entries", List.of());
+                model.addAttribute("error", "Invalid date format");
+                model.addAttribute("selectedMood", "all");
+
+                entries = List.of(); // to prevent null error
+            }
         }
 
-        // Stats and Weather
+        model.addAttribute("entries", entries);
         model.addAttribute("totalEntries", diaryService.getTotalEntries(user));
         model.addAttribute("entriesThisMonth", diaryService.getEntriesThisMonth(user));
         model.addAttribute("lastEntryDate", diaryService.getLastEntryDate(user));
         model.addAttribute("moodStats", diaryService.getMoodStatistics(user));
         model.addAttribute("monthlyTrends", diaryService.getMonthlyMoodTrends(user));
 
-        Weather weather = (lat != null && lon != null)
-                ? weatherService.getWeatherByCoordinates(lat, lon)
-                : weatherService.getCurrentWeather();
+        Weather weather = null;
+        if (lat != null && lon != null) {
+            weather = weatherService.getWeatherByCoordinates(lat, lon);
+        } else {
+            try {
+                weather = weatherService.getCurrentWeather();
+            } catch (Exception e) {
+                System.out.println("Weather fallback failed: " + e.getMessage());
+            }
+        }
         model.addAttribute("weather", weather);
-
         model.addAttribute("newEntry", new DiaryEntry());
+
         return "dashboard";
     }
+
+
 
     @GetMapping("/diary/filter")
     public String filterByMood(@RequestParam("mood") String mood,

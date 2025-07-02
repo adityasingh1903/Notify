@@ -438,6 +438,8 @@
                 <h2 class="form-title">Create Account</h2>
                 <p class="form-subtitle">Fill in your details to get started</p>
             </div>
+            <div th:if="${error}" class="error-message" style="text-align: center; margin-bottom: 1rem;" th:text="${error}"></div>
+            <div th:if="${success}" class="success-message" style="text-align: center; margin-bottom: 1rem;" th:text="${success}"></div>
 
             <form class="signup-form" th:action="@{/register}" method="post" th:object="${user}">
                 <div class="form-group">
@@ -505,15 +507,7 @@
                     Create My Account
                 </button>
 
-                <div th:if="${error}" class="error-message" style="text-align: center; margin-bottom: 1rem;" th:text="${error}"></div>
-                <div th:if="${success}" class="success-message" style="text-align: center; margin-bottom: 1rem;" th:text="${success}"></div>
             </form>
-
-            <div class="divider">
-                <span>or sign up with</span>
-            </div>
-
-
             <div class="login-link">
                 Already have an account? <a href="#" th:href="@{/login}">Sign in</a>
             </div>
